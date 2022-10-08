@@ -12,7 +12,7 @@ import (
 var knownStorageTypes = make(map[string]Client)
 
 func init() {
-	
+	knownStorageTypes["git"] = git.NewStorageClient()
 }
 
 // GetStorageClient gets the storage client based on the client
