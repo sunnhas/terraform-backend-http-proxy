@@ -1,0 +1,14 @@
+### Go ###
+.go
+
+### Intellij ###
+*.iml
+modules.xml
+*.ipr
+
+# Idea shared configuration
+.idea/*
+!.idea/runConfigurations
+!.idea/runConfigurations/*.xml
+!.idea/codeStyles
+!.idea/codeStyles/*.xml
