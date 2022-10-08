@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/gin-gonic/gin"
+	"terraform-backend-http-proxy/encryption"
 	"terraform-backend-http-proxy/storage"
 	"terraform-backend-http-proxy/storage/storagetypes"
 )
@@ -111,6 +112,17 @@ func GetState(requestData *storagetypes.ClientData) ([]byte, error) {
 		return nil, err
 	}
 
+	provider, err := encryption.GetEncryptionProvider()
+	if err != nil {
+		return nil, err
+	}
+
+	if provider != nil {
+		if state, err = provider.Decrypt(state); err != nil {
+			return nil, err
+		}
+	}
+
 	return state, nil
 }
 
@@ -124,6 +136,17 @@ func UpdateState(requestData *storagetypes.ClientData, body []byte) error {
 	// We can only update state if we obtained the lock
 	if err := lockedByMe(requestData, storageClient); err != nil {
 		return err
+	}
+
+	provider, err := encryption.GetEncryptionProvider()
+	if err != nil {
+		return err
+	}
+
+	if provider != nil {
+		if body, err = provider.Encrypt(body); err != nil {
+			return err
+		}
 	}
 
 	if err := storageClient.UpdateState(requestData.Metadata, body); err != nil {
