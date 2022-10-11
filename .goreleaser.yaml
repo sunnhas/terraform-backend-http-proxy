@@ -1,0 +1,62 @@
+project_name: tf-http-backend
+
+before:
+  hooks:
+    - go mod tidy
+    - go generate ./...
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+
+archives:
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      386: i386
+      amd64: x86_64
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+
+brews:
+  - name: tf-http-backend
+    homepage: "https://github.com/sunnhas/tf-http-backend"
+    description: "A http backend for Terraform to proxy to a Git repository"
+
+    tap:
+      owner: sunnhas
+      name: homebrew-utils
+      branch: main
+
+    commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
+
+    folder: Formula
+
+    license: Apache-2.0
+
+    skip_upload: auto
+
+    dependencies:
+      - name: git
+
+    test: |
+      system "#{bin} --version"
+
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
