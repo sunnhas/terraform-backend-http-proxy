@@ -13,6 +13,10 @@ builds:
       - windows
       - darwin
 
+    # Default is `-s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser`.
+    ldflags:
+      - -s -w -X cmd.Version={{.Version}} -X cmd.Commit={{.Commit}} -X cmd.Date={{.Date}}
+
 archives:
   - replacements:
       darwin: Darwin
